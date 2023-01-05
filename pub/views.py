@@ -32,6 +32,8 @@ class create_user(generics.CreateAPIView):
             'username': request.data['username'],
             'password': request.data['password'],
             'email': request.data['email'],
+            'title': request.data['title'],
+            'description': request.data['description']
         }
         publish_data_on_redis(json_data, 'user.new')
         message = Response_User_Infor.handle(self)

@@ -25,19 +25,23 @@ class Create_user(BaseCommand):
                 # print(data['username'])
                 user_create = User.objects.create_user(username=data['username'], password=data['password'], email=data['email'])
                 user_create.save()
+                post_create = Post.objects.create(title=data['title'], description=data['description'], user=user_create)
+                post_create.save()
+                print("Post created successfully")
                 print("User created successfully")
                 user_info = User.objects.filter(id =user_create.id).first()
                 user_info = UserSerializer(user_info)
                 print(user_info.data)
+                print(Post.objects.filter(user=user_create.id).first().title)
                 # # print(user_info.data)
                 data_json = user_info.data
                 publish_data_on_redis(data_json, 'user.created')
 
 
 log = logging.getLogger(__name__)
-@create_subscription(Post)
-def handle_create(instance):
-    log.debug('Created {}'.format(instance.name))
+# @create_subscription(Post)
+# def handle_create(instance):
+#     log.debug('Created {}'.format(instance.name))
 if __name__ == '__main__':
     Create_user().handle()
 
